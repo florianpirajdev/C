@@ -5,93 +5,84 @@
 #define MAX_BYTES 100
 
 int main(void) {
-    char vlera[MAX_BYTES];
+    char teksti[MAX_BYTES];
+    size_t gjatesia = 0;
 
-    // Rezervojme fillimisht 1 byte per '\0'
+    // Fillojme me 1 byte per stringun bosh.
     char *buffer = malloc(1);
 
     if (buffer == NULL) {
-        printf("Gabim ne rezervimin e memories!\n");
+        printf("Gabim ne memorie!\n");
         return 1;
     }
 
     buffer[0] = '\0';
 
-    // Gjatesia e tekstit ne buffer, pa '\0'
-    size_t gjatesia = 0;
-
     while (1) {
         printf("Shkruaj tekst (ose stop): ");
 
-        // Lexojme nje rresht, perfshire hapesirat
-        if (fgets(vlera, sizeof vlera, stdin) == NULL) {
+        // Lexojme nje rresht, perfshire hapesirat.
+        if (fgets(teksti, sizeof teksti, stdin) == NULL) {
             break;
         }
 
-        // Nese mungon '\n', kontrollojme pjesen e mbetur
-        if (strchr(vlera, '\n') == NULL) {
+        // Heqim Enter-in nga teksti.
+        teksti[strcspn(teksti, "\n")] = '\0';
+        size_t gjatesiaTekstit = strlen(teksti);
+
+        // Refuzojme hyrjen me 99 ose me shume bytes tekst.
+        // Lexojme dhe hedhim poshte pjesen e mbetur deri te Enter-i.
+        if (gjatesiaTekstit == MAX_BYTES - 1) {
             int karakteri = getchar();
 
-            if (karakteri != '\n' && karakteri != EOF) {
-                // Zbrazim pjesen e mbetur te rreshtit
-                while ((karakteri = getchar()) != '\n'
-                       && karakteri != EOF) {
-                }
-
-                printf("Teksti eshte shume i gjate!\n\n");
-                continue;
+            while (karakteri != '\n' && karakteri != EOF) {
+                karakteri = getchar();
             }
+
+            printf("Teksti eshte shume i gjate!\n");
+            continue;
         }
 
-        // Heqim karakterin e Enter-it
-        vlera[strcspn(vlera, "\n")] = '\0';
-
-        if (strcmp(vlera, "stop") == 0) {
+        if (strcmp(teksti, "stop") == 0) {
             break;
         }
 
-        // Anashkalojme rreshtin bosh
-        if (vlera[0] == '\0') {
+        // Anashkalojme rreshtin bosh.
+        if (gjatesiaTekstit == 0) {
             continue;
         }
 
-        size_t gjatesiaVleres = strlen(vlera);
+        // Teksti ekzistues + teksti i ri + hapesira + '\0'.
+        size_t madhesia = gjatesia + gjatesiaTekstit + 2;
 
-        // Teksti aktual + teksti i ri + hapesira + '\0'
-        size_t bytesNevojiten = gjatesia + gjatesiaVleres + 2;
-
-        if (bytesNevojiten > MAX_BYTES) {
-            printf("Nuk ka vend per kete tekst!\n");
-            printf("Kufiri eshte %d bytes, perfshire '\\0'.\n\n",
-                   MAX_BYTES);
+        if (madhesia > MAX_BYTES) {
+            printf("Nuk ka vend! Kufiri eshte 100 bytes.\n");
             continue;
         }
 
-        // Zmadhojme bufferin sipas nevojes
-        char *temporary = realloc(buffer, bytesNevojiten);
+        // Zmadhojme memorien duke ruajtur tekstin ekzistues.
+        char *temp = realloc(buffer, madhesia);
 
-        if (temporary == NULL) {
-            printf("Gabim ne zmadhimin e bufferit!\n");
+        if (temp == NULL) {
+            printf("Gabim ne memorie!\n");
             free(buffer);
             return 1;
         }
 
-        buffer = temporary;
+        buffer = temp;
 
-        // Shtojme tekstin dhe nje hapesire ne fund
-        strcat(buffer, vlera);
+        // strcat vendos automatikisht '\0' ne fund.
+        strcat(buffer, teksti);
         strcat(buffer, " ");
 
-        gjatesia = gjatesia + gjatesiaVleres + 1;
+        gjatesia = gjatesia + gjatesiaTekstit + 1;
 
         printf("Bufferi: \"%s\"\n", buffer);
-        printf("Memoria e rezervuar: %zu / %d bytes\n\n",
-               bytesNevojiten, MAX_BYTES);
+        printf("Memoria: %zu / %d bytes\n\n", madhesia, MAX_BYTES);
     }
 
     printf("\nTeksti perfundimtar: \"%s\"\n", buffer);
 
     free(buffer);
-
     return 0;
 }

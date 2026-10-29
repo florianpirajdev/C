@@ -1,9 +1,9 @@
 #include <stdio.h>
-#include <string.h>
 
 int main(void) {
     char emri[100];
 
+    // Hapim file-in per shkrim
     FILE *file = fopen("nxenesit.txt", "w");
 
     if (file == NULL) {
@@ -14,28 +14,19 @@ int main(void) {
     for (int i = 0; i < 3; i++) {
         printf("Shkruaj emrin dhe mbiemrin e nxenesit %d: ", i + 1);
 
+        // Lexojme emrin bashke me hapesirat dhe Enter-in
         if (fgets(emri, sizeof emri, stdin) == NULL) {
-            fclose(file);
-            return 1;
+            break;
         }
 
-        // Heqim karakterin e Enter-it
-        emri[strcspn(emri, "\n")] = '\0';
-
-        // Ruajme emrin ne nje rresht te ri
-        if (fprintf(file, "%s\n", emri) < 0) {
-            printf("Gabim gjate shkrimit!\n");
-            fclose(file);
-            return 1;
-        }
+        // Shkruajme emrin ne file
+        fprintf(file, "%s", emri);
     }
 
-    if (fclose(file) == EOF) {
-        printf("Gabim gjate ruajtjes!\n");
-        return 1;
-    }
+    // Mbyllim file-in
+    fclose(file);
 
-    printf("Nxenesit u ruajten me sukses!\n");
+    printf("Shkrimi ne file perfundoi!\n");
 
     return 0;
 }

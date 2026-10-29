@@ -1,9 +1,7 @@
 #include <stdio.h>
-#include <string.h>
 
 int main(void) {
     char emri[100];
-    int numri = 0;
 
     FILE *file = fopen("nxenesit.txt", "r");
 
@@ -13,23 +11,10 @@ int main(void) {
     }
 
     while (fgets(emri, sizeof emri, file) != NULL) {
-        // Heqim karakterin e fundit te rreshtit
-        emri[strcspn(emri, "\n")] = '\0';
-
-        numri++;
-
-        printf("%d. %s\n", numri, emri);
-    }
-
-    if (ferror(file)) {
-        printf("Gabim gjate leximit!\n");
-        fclose(file);
-        return 1;
+        printf("%s", emri);
     }
 
     fclose(file);
-
-    printf("\nGjithsej: %d nxenes\n", numri);
 
     return 0;
 }
