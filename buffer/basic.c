@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-//Shembuj nga buffers te ndryshem
 // Shembulli 1 - Ruajtja e tekstit ne Buffer
 void shembulli1() {
     char buffer[20];
